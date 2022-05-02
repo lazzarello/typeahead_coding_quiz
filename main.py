@@ -18,11 +18,16 @@ for line in sys.stdin:
 i_splitlines = i_file_contents.splitlines()
 
 def get_words(i):
-    last = int(i[0]) + 1
-    dict_offset = last
-    # a little weird we set this here but...why not. prolly should rename the function
-    input_offset = dict_offset + 1
-    return i[1:last]
+    # lulz, scope.
+    global dict_offset
+    dict_offset = int(i[0]) + 1
+    # dict_offset = last
+    return i[1:dict_offset]
+
+def get_inputs(i):
+    global input_offset
+    input_offset = i[dict_offset]
+    return input_offset
 
 def format_words(i):
     i_w = get_words(i)
@@ -36,9 +41,10 @@ def call_autocomplete(words):
 
 def output(i):
     words = format_words(i)
-    # inputs = get_input(i)
+    inputs = get_inputs(i)
+    print(inputs)
     autocomplete = call_autocomplete(words)
-    # well that's nice. It does a search. Time to actually get input.
+    # well that's nice. It does a search. Time to actually get simulated input to loop over.
     return autocomplete.search(word='v')
 
 def main():
