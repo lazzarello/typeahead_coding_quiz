@@ -26,8 +26,9 @@ def get_words(i):
 
 def get_inputs(i):
     global input_offset
-    input_offset = i[dict_offset]
-    return input_offset
+    input_offset = int(i[dict_offset])
+    print(dict_offset)
+    return i[dict_offset+1:]
 
 def format_words(i):
     i_w = get_words(i)
