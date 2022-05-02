@@ -21,7 +21,6 @@ def get_words(i):
     # lulz, scope.
     global dict_offset
     dict_offset = int(i[0]) + 1
-    # dict_offset = last
     return i[1:dict_offset]
 
 def get_inputs(i):
@@ -33,9 +32,9 @@ def format_words(i):
     i_w = get_words(i)
     for i in i_w:
         w = i.split(split_character)
-        words[w[0]] = {}
+        words[w[0]] = {'count': w[1]}
     return words
-    
+
 def load_autocomplete(words):
     return AutoComplete(words=words)
 
@@ -45,6 +44,11 @@ def flatten_list(i):
 
 def join_list_of_strings(l):
     return ', '.join(l)
+
+def write_file_from_string(filename, i_string):
+    f = open(filename, "w")
+    f.write(i_string)
+    f.close()
 
 def output(i):
     words = format_words(i)
@@ -65,8 +69,9 @@ def output(i):
     return output_string
 
 def main():
-    print(output(i_splitlines))
-    # output(i_splitlines)
+    o = output(i_splitlines)
+    print(o)
+    write_file_from_string('test_output_1.txt', o)
 
 # push the old stuff into a class so I can read better
 class NoLibraryVersion():
