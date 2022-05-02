@@ -27,7 +27,6 @@ def get_words(i):
 def get_inputs(i):
     global input_offset
     input_offset = int(i[dict_offset])
-    # print(dict_offset)
     return i[dict_offset+1:]
 
 def format_words(i):
@@ -40,10 +39,6 @@ def format_words(i):
 def load_autocomplete(words):
     return AutoComplete(words=words)
 
-def search_autocomplete(i):
-    inputs = get_inputs(i)
-    return inputs
-
 def flatten_list(i):
     # totally unreadable but does what we want
     return [item for sublist in i for item in sublist]
@@ -55,7 +50,7 @@ def output(i):
     words = format_words(i)
     autocomplete = load_autocomplete(words)
     # print(search_autocomplete(i))
-    search_input = search_autocomplete(i)
+    search_input = get_inputs(i)
     w = ''
     for c in search_input:
         if(c == i_terminator):
