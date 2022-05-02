@@ -45,7 +45,11 @@ def search_autocomplete(i):
     return inputs
 
 def flatten_list(i):
-    return 'list comprehensions are cool'
+    # totally unreadable but does what we want
+    return [item for sublist in i for item in sublist]
+
+def join_list_of_strings(l):
+    return ', '.join(l)
 
 def output(i):
     words = format_words(i)
@@ -61,7 +65,8 @@ def output(i):
             w += c
             # This doesn't produce the expected output to match output_2 but it matches output_1.
             # Investigate the trick question part of input_2.
-            print(autocomplete.search(word=w))
+            list_output = flatten_list(autocomplete.search(word=w))
+            print(join_list_of_strings(list_output))
     return search_input
 
 def main():
