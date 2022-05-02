@@ -5,11 +5,11 @@ i_terminator = '#'
 i_file_contents = ""
 phrase_freq = {}
 space_replacement = '_'
-words = {}
 split_character = ','
 # we don't know the values of these until we call the functions
 dict_offset = 0
 input_offset = 0
+words = {}
 
 for line in sys.stdin:
     i_file_contents += line
@@ -27,7 +27,7 @@ def get_words(i):
 def get_inputs(i):
     global input_offset
     input_offset = int(i[dict_offset])
-    print(dict_offset)
+    # print(dict_offset)
     return i[dict_offset+1:]
 
 def format_words(i):
@@ -37,19 +37,35 @@ def format_words(i):
         words[w[0]] = {}
     return words
     
-def call_autocomplete(words):
+def load_autocomplete(words):
     return AutoComplete(words=words)
+
+def search_autocomplete(i):
+    inputs = get_inputs(i)
+    return inputs
+
+def flatten_list(i):
+    return 'list comprehensions are cool'
 
 def output(i):
     words = format_words(i)
-    inputs = get_inputs(i)
-    print(inputs)
-    autocomplete = call_autocomplete(words)
-    # well that's nice. It does a search. Time to actually get simulated input to loop over.
-    return autocomplete.search(word='v')
+    autocomplete = load_autocomplete(words)
+    # print(search_autocomplete(i))
+    search_input = search_autocomplete(i)
+    w = ''
+    for c in search_input:
+        if(c == i_terminator):
+            w = ''
+            print(w)
+        else:
+            w += c
+            # This doesn't produce the expected output to match output_2 but it matches output_1.
+            # Investigate the trick question part of input_2.
+            print(autocomplete.search(word=w))
+    return search_input
 
 def main():
-    print(output(i_splitlines))
+    output(i_splitlines)
 
 # push the old stuff into a class so I can read better
 class NoLibraryVersion():
