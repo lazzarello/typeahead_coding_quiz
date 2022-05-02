@@ -1,0 +1,26 @@
+vertical_farm, vertical_farming, vapor_deficit, vertical
+vertical_farm, vertical_farming, vertical
+vertical_farm, vertical_farming, vertical
+vertical_farm, vertical_farming, vertical
+vertical_farm, vertical_farming, vertical
+vertical_farm, vertical_farming, vertical
+vertical_farm, vertical_farming, vertical
+vertical_farm, vertical_farming, vertical
+vertical_farm, vertical_farming
+vertical_farm, vertical_farming
+vertical_farm, vertical_farming
+vertical_farm, vertical_farming
+vertical_farm, vertical_farming
+vertical_farming
+vertical_farming
+vertical_farming
+
+lettuce, leafy
+lettuce, leafy
+lettuce
+lettuce
+lettuce
+lettuce
+lettuce
+
+vertical_farming, vertical_farm, vapor_deficit, vertical
