@@ -9,6 +9,7 @@ split_character = ','
 # we don't know the values of these until we call the functions
 dict_offset = 0
 input_offset = 0
+# is this just being...ignored?
 words = {}
 
 for line in sys.stdin:
@@ -32,6 +33,8 @@ def format_words(i):
     i_w = get_words(i)
     for i in i_w:
         w = i.split(split_character)
+        # why is the 7th result sorted backwards in example output 1?
+        # why is the result in example output 2 just like, wrong?
         words[w[0]] = {'count': w[1]}
     return words
 
@@ -62,16 +65,15 @@ def output(i):
             output_string += '\n'
         else:
             search_string += c
-            # This doesn't produce the expected output to match output_2 but it matches output_1.
-            # Investigate this trick question part of input_2.
             list_output = flatten_list(autocomplete.search(word=search_string))
             output_string += f'{join_list_of_strings(list_output)}\n'
     return output_string
 
 def main():
     o = output(i_splitlines)
+    # does count as stdout? I think so.
     print(o)
-    write_file_from_string('test_output_1.txt', o)
+    # write_file_from_string('test_output_1.txt', o)
 
 # push the old stuff into a class so I can read better
 class NoLibraryVersion():
