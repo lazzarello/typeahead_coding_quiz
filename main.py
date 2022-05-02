@@ -1,17 +1,19 @@
 import sys
 from fast_autocomplete import AutoComplete,autocomplete_factory
+# TODO run black on this and reformat
 
 # globals,
-# could be instance variables but my intuition is not OOP, so I started like this
+# could be instance/class variables but my intuition is not OOP, so I started like this
 i_terminator = '#'
 i_file_contents = ""
 phrase_freq = {}
 space_replacement = '_'
 split_character = ','
-# we don't know the values of these until we call the functions
 dict_offset = 0
 input_offset = 0
 words = {}
+# Use protected conventions
+_num_results = 10
 
 # get standard input. ez pz.
 for line in sys.stdin:
@@ -35,21 +37,27 @@ def get_inputs(i):
 
 def format_words(i):
     # get previously input words
+    global words
     i_w = get_words(i)
     for i in i_w:
         # split into [phrase, count] then format words dict for our DWG library
         w = i.split(split_character)
-        # TODO debug this (is this the tie-breaker trick question in the instructions?)
-        # why is the 7th result sorted backwards in example output 1?
-        # why is the result in example output 2 just like, wrong?
+        # The fast-autocomplete lib picks alphabetical order ascending as tie-breaker.
+        # Q: why is the 8th result always sorted backwards using example input 1?
+        # A: fast-autocomplete lib prefers an exact match for sorting over frequency
+        #    so 'vertical' will always sort 'vertical' first.
+        # Q: why is the result in example output 2 just like, wrong? 
+        # A: fast-autocomplete lib treats '_' as some type of special search character
+        #    which might be due to some fancy DAG thing I don't understand.
+        #    this seems to be a result of the max_cost param to the autocomplete.search function
+        #    this seems to be a result of the max_cost param to the autocomplete.search function
         
         # pass in count to word dict for autocomplete lib to use for sorting later
         words[w[0]] = {'count': w[1]}
-    # this is a bit weird, scope wise. TODO try adding global words to function
     return words
 
 def load_autocomplete(words):
-    # pass previously input words dict into autocomplet lib
+    # pass previously input words dict into autocomplete lib
     return AutoComplete(words=words)
 
 def flatten_list(i):
@@ -76,9 +84,16 @@ def output(i):
     autocomplete = load_autocomplete(words)
     # get a list of our simulated user input
     search_input = get_inputs(i)
+    print(f'Previous Words and Frequency: {words}')
+    print(f'Search inputs" {search_input}')
     # loop through simulated user input as if typing characters, reset on i_terminator character
     for c in search_input:
         if(c == i_terminator):
+            # TODO let's like, add 1 to the count, please?
+            words[search_string] = { 'count': '1' }
+            print(f'Previous Words and Frequency: {words}')
+            autocomplete = load_autocomplete(words)
+            # reset search input
             search_string = ''
             output_string += '\n'
         else:
@@ -86,16 +101,15 @@ def output(i):
             search_string += c
             # call autocomplete lib search,
             # autocomplete lib returns a list of lists of characters, flatten into a single list,
-            list_output = flatten_list(autocomplete.search(word=search_string))
+            list_output = flatten_list(autocomplete.search(word=search_string, size=_num_results))
             # join the list in each line to match our example output
-            output_string += f'{join_list_of_strings(list_output)}\n'
+            output_string += f'Search Input \'{search_string}\' : {join_list_of_strings(list_output)}\n'
     return output_string
 
 def main():
     # call the output function with splitlines as input
     o = output(i_splitlines)
     # does print count as stdout? I think so.
-    print(words)
     print(o)
     # write_file_from_string('test_output_1.txt', o)
 
