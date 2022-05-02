@@ -49,23 +49,24 @@ def join_list_of_strings(l):
 def output(i):
     words = format_words(i)
     autocomplete = load_autocomplete(words)
-    # print(search_autocomplete(i))
     search_input = get_inputs(i)
-    w = ''
+    search_string = ''
+    output_string = ''
     for c in search_input:
         if(c == i_terminator):
-            w = ''
-            print(w)
+            search_string = ''
+            output_string += '\n'
         else:
-            w += c
+            search_string += c
             # This doesn't produce the expected output to match output_2 but it matches output_1.
-            # Investigate the trick question part of input_2.
-            list_output = flatten_list(autocomplete.search(word=w))
-            print(join_list_of_strings(list_output))
-    return search_input
+            # Investigate this trick question part of input_2.
+            list_output = flatten_list(autocomplete.search(word=search_string))
+            output_string += f'{join_list_of_strings(list_output)}\n'
+    return output_string
 
 def main():
-    output(i_splitlines)
+    print(output(i_splitlines))
+    # output(i_splitlines)
 
 # push the old stuff into a class so I can read better
 class NoLibraryVersion():
