@@ -126,7 +126,7 @@ def output(i):
             # join the list in each line to match our example output
             # output_string += f"Search Input '{search_string}' : {join_list_of_strings(list_output)}\n"
             output_string += f"{join_list_of_strings(list_output)}\n"
-    return output_string
+    return output_string[:output_string.rfind('\n')]
 
 
 def main():
