@@ -1,17 +1,19 @@
 import sys
 from collections import defaultdict
+
 # Lean on a fancy lib for search algorithm
 # https://pypi.org/project/fast-autocomplete/
-from fast_autocomplete import AutoComplete,autocomplete_factory
+from fast_autocomplete import AutoComplete, autocomplete_factory
+
 # TODO run black on this and reformat
 
 # globals,
 # could be instance/class variables but my intuition is not OOP, so I started like this
-i_terminator = '#'
+i_terminator = "#"
 i_file_contents = ""
 phrase_freq = {}
-space_replacement = '_'
-split_character = ','
+space_replacement = "_"
+split_character = ","
 dict_offset = 0
 input_offset = 0
 words = {}
@@ -25,6 +27,7 @@ for line in sys.stdin:
 # splitlines into a list, but this can totally be done up there ^^
 i_splitlines = i_file_contents.splitlines()
 
+
 def get_words(i):
     # lulz, scope. check commit history for me being dumb.
     global dict_offset
@@ -32,11 +35,13 @@ def get_words(i):
     dict_offset = int(i[0]) + 1
     return i[1:dict_offset]
 
+
 def get_inputs(i):
     global input_offset
     # convention in the rules says dict_offset + 1 is a data offset for user input
     input_offset = int(i[dict_offset])
-    return i[dict_offset+1:]
+    return i[dict_offset + 1 :]
+
 
 def format_words(i):
     # get previously input words
@@ -50,13 +55,14 @@ def format_words(i):
         # Q: why is the 8th result always sorted backwards using example input 1?
         # A: fast-autocomplete lib prefers an exact match for sorting above frequency,
         #    so 'vertical' will always sort 'vertical' first regardless of i_terminator.
-        # Q: why is the result in example output 2 just like, wrong? 
+        # Q: why is the result in example output 2 just like, wrong?
         # A: fast-autocomplete lib is matching 'iron_' to ironman, and a few others.
         #    This could be due to the mis-spelling feature.
-        
+
         # pass in count to word dict for autocomplete lib to use for sorting later
-        words[w[0]] = {'count': int(w[1])}
+        words[w[0]] = {"count": int(w[1])}
     return words
+
 
 def load_autocomplete(words):
     # pass previously input words dict into autocomplete lib
@@ -64,13 +70,16 @@ def load_autocomplete(words):
     # https://zepworks.com/posts/you-autocomplete-me/
     return AutoComplete(words=words)
 
+
 def flatten_list(i):
     # totally unreadable but does what the name says
     return [item for sublist in i for item in sublist]
 
+
 def join_list_of_strings(l):
     # use formatting convention to match example output files
-    return ', '.join(l)
+    return ", ".join(l)
+
 
 def write_file_from_string(filename, i_string):
     # write an input string to filename
@@ -78,10 +87,11 @@ def write_file_from_string(filename, i_string):
     f.write(i_string)
     f.close()
 
+
 def output(i):
     # locals for later
-    search_string = ''
-    output_string = ''
+    search_string = ""
+    output_string = ""
     # fill up the dict of previously input words
     words = format_words(i)
     # load up autocomplete with the dict
@@ -92,27 +102,32 @@ def output(i):
     # print(f'Search inputs" {search_input}')
     # loop through simulated user input as if typing characters, reset on i_terminator character
     for c in search_input:
-        if(c == i_terminator):
+        if c == i_terminator:
             # Effective Python page 68 "Prefer get Over in..."
             if words.get(search_string) is None:
-                words[search_string] = { 'count' : 1 }
+                words[search_string] = {"count": 1}
                 autocomplete = load_autocomplete(words)
             else:
-                words[search_string]['count'] += 1 
-                autocomplete.update_count_of_word(word=search_string, count=words[search_string]['count'])
+                words[search_string]["count"] += 1
+                autocomplete.update_count_of_word(
+                    word=search_string, count=words[search_string]["count"]
+                )
             # print(f'Previous Words and Frequency: {words}')
             # reset search input
-            search_string = ''
-            output_string += '\n'
+            search_string = ""
+            output_string += "\n"
         else:
             # keep stackin' chars into search input
             search_string += c
             # call autocomplete lib search,
             # autocomplete lib returns a list of lists of characters, flatten into a single list,
-            list_output = flatten_list(autocomplete.search(word=search_string, max_cost=1, size=_num_results))
+            list_output = flatten_list(
+                autocomplete.search(word=search_string, max_cost=1, size=_num_results)
+            )
             # join the list in each line to match our example output
-            output_string += f'Search Input \'{search_string}\' : {join_list_of_strings(list_output)}\n'
+            output_string += f"Search Input '{search_string}' : {join_list_of_strings(list_output)}\n"
     return output_string
+
 
 def main():
     # call the output function with splitlines as input
@@ -121,8 +136,9 @@ def main():
     print(o)
     # write_file_from_string('test_output_1.txt', o)
 
+
 # push the old stuff into a class so I can read this file better
-class NoLibraryVersion():
+class NoLibraryVersion:
     def __init__(self):
         self.foo = 0
 
@@ -134,8 +150,8 @@ class NoLibraryVersion():
     def get_frequencies(self, i):
         # input is a string seperated by a comma, one line at a time
         # return a dict with form { 'phrase' : frequency }
-        split_input = input.split(',')
-        phrase_freq[split_input[0]] = split_input[1] 
+        split_input = input.split(",")
+        phrase_freq[split_input[0]] = split_input[1]
         return phrase_freq
 
     def simulated_input_characters(self, i):
@@ -147,7 +163,8 @@ class NoLibraryVersion():
 
     # not really necessary but nice
     def replace_underscore_to_space(self, phrase):
-        return phrase.replace(space_replacement, ' ')
+        return phrase.replace(space_replacement, " ")
+
 
 if __name__ == "__main__":
     main()
