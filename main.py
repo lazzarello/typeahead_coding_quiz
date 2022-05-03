@@ -1,5 +1,5 @@
 import sys
-
+import string
 # Lean on a fancy lib for search algorithm,
 # which is TOO FANCY to output the exact results in the examples
 # https://pypi.org/project/fast-autocomplete/
@@ -16,6 +16,7 @@ _split_character = ","
 _i_file_contents = ""
 _i_terminator = "#"
 _num_results = 10
+_valid_chars = '_' + string.ascii_lowercase
 # prolly don't need these ever
 phrase_freq = {}
 space_replacement = "_"
@@ -51,13 +52,13 @@ def format_words(i):
         w = i.split(_split_character)
         # The fast-autocomplete lib picks alphabetical order ascending as tie-breaker.
         # The instructions say: "To break ties, use the alphabetical ordering of the phrases."
-        # which does not match the example output but is correct. weird.
+        # The example output used different convention to define sorting alphabetically.
+        # TODO modify the library to filp the alphabetical to sort asc, not desc,
+
         # Q: why is the 8th result always sorted backwards using example input 1?
         # A: fast-autocomplete lib prefers an exact match for sorting above frequency,
         #    so 'vertical' will always sort 'vertical' first regardless of count.
-        # Q: why is the result in example output 2 just like, wrong?
-        # A: fast-autocomplete lib is matching 'iron_' to ironman, and a few others.
-        #    This could be due to the mis-spelling feature.
+        #    issue reported in library https://github.com/seperman/fast-autocomplete/issues/28
 
         # pass in count to word dict for autocomplete lib to use for sorting later
         words[w[0]] = {"count": int(w[1])}
@@ -65,10 +66,14 @@ def format_words(i):
 
 
 def load_autocomplete(words):
-    # pass previously input words dict into autocomplete lib
-    # oh my, this library is complicated.
-    # https://zepworks.com/posts/you-autocomplete-me/
-    return AutoComplete(words=words)
+    # Q: why is the result in example output 2 just like, wrong?
+    # A: fast-autocomplete lib is matching 'iron_' to ironman, and a few others.
+    #    The default is only alphbetical ASCII. This should be fixed with the 
+    #    valid_chars_for_string parameter but in practice it doesn't do what
+    #    I expect. Issue reported, might take a swing at it.
+    #    https://github.com/seperman/fast-autocomplete/issues/37
+    # print(f'Valid Characers: {_valid_chars}')
+    return AutoComplete(words=words, synonyms={}, valid_chars_for_string=_valid_chars)
 
 
 def flatten_list(i):
