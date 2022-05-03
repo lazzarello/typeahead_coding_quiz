@@ -1,5 +1,6 @@
 import sys
 import string
+
 # Lean on a fancy lib for search algorithm,
 # which is TOO FANCY to output the exact results in the examples
 # https://pypi.org/project/fast-autocomplete/
@@ -16,7 +17,7 @@ _split_character = ","
 _i_file_contents = ""
 _i_terminator = "#"
 _num_results = 10
-_valid_chars = '_' + string.ascii_lowercase
+_valid_chars = "_" + string.ascii_lowercase
 # prolly don't need these ever
 phrase_freq = {}
 space_replacement = "_"
@@ -68,7 +69,7 @@ def format_words(i):
 def load_autocomplete(words):
     # Q: why is the result in example output 2 just like, wrong?
     # A: fast-autocomplete lib is matching 'iron_' to ironman, and a few others.
-    #    The default is only alphbetical ASCII. This should be fixed with the 
+    #    The default is only alphbetical ASCII. This should be fixed with the
     #    valid_chars_for_string parameter but in practice it doesn't do what
     #    I expect. Issue reported, might take a swing at it.
     #    https://github.com/seperman/fast-autocomplete/issues/37
@@ -84,6 +85,7 @@ def flatten_list(i):
 def join_list_of_strings(l):
     # use formatting convention to match example output files
     return ", ".join(l)
+
 
 def write_file_from_string(filename, i_string):
     # write an input string to filename
@@ -131,7 +133,7 @@ def output(i):
             # join the list in each line to match our example output
             # output_string += f"Search Input '{search_string}' : {join_list_of_strings(list_output)}\n"
             output_string += f"{join_list_of_strings(list_output)}\n"
-    return output_string[:output_string.rfind('\n')]
+    return output_string[: output_string.rfind("\n")]
 
 
 def main():
