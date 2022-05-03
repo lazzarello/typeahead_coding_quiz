@@ -1,5 +1,4 @@
 import sys
-from collections import defaultdict
 
 # Lean on a fancy lib for search algorithm
 # https://pypi.org/project/fast-autocomplete/
