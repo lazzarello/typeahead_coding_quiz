@@ -49,8 +49,9 @@ def format_words(i):
     for i in i_w:
         # split into [phrase, count] then format words dict for our autocomplete lib
         w = i.split(_split_character)
-        # TODO The fast-autocomplete lib picks alphabetical order ascending as tie-breaker.
-        # The convention in the instructions is decending order.
+        # The fast-autocomplete lib picks alphabetical order ascending as tie-breaker.
+        # The instructions say: "To break ties, use the alphabetical ordering of the phrases."
+        # which does not match the example output but is correct. weird.
         # Q: why is the 8th result always sorted backwards using example input 1?
         # A: fast-autocomplete lib prefers an exact match for sorting above frequency,
         #    so 'vertical' will always sort 'vertical' first regardless of count.
@@ -78,7 +79,6 @@ def flatten_list(i):
 def join_list_of_strings(l):
     # use formatting convention to match example output files
     return ", ".join(l)
-
 
 def write_file_from_string(filename, i_string):
     # write an input string to filename
