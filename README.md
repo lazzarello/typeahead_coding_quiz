@@ -1,34 +1,70 @@
 # Unfold coding quiz
 
-A typeahead search autocomplete system using text files as input. There is a frequency for each phrase (not word?). Input is terminated with a `#` character. For the purpose of this
-assignment, you will be running your code with input files, passed on stdin.
+## Running
 
-There is a [python library that suggests](https://pypi.org/project/fast-autocomplete/) it could "just work". This transforms this puzzle into one based only on text file input and output structure. I suspect this is not the primary goal but my particular set of skills lie in integrating open source components, rather then implementing algorithms from memory, so I'm going to demonstrate my strengths first.
+1. Python > 3.6
+2. `pip install -r requirements.txt`
+3. `python main.py < input_1.txt > test_output_1.txt`
+4. `diff output_1.txt test_output_1.txt`
 
-## Problem Groups
+## Dockerfile
 
-1. User Input From Special File [x]
-2. Processing
-  1. Search Algorithm
-    1. Acquire number of phrases [x]
-    1. [Trie](https://pypi.org/project/PyTrie/)
-    2. [Fast Autocomplete](https://pypi.org/project/fast-autocomplete/) (this one literally does all the algo stuff we need, which leaves only input/output string formatting as the challenge) [ ] 
-    3. Something else based on input file conventions
-  3. Result Ranking
-    1. Acquire frequency [ ]
-    1. Fast Autocomplete does this as an example [ ] 
-3. Caching (optional)
-  1. Cache type
-4. Output [ ]
-5. Test Cases (assert output is equal to the test output files contents)
-6. Performance Optimization (optional)
+Dependencies not installing or not interested in upgrading python version? Run it interactively inside a container.
 
-## Study Subjects
+1. Install docker
+2. `docker build -t unfold_typeahead_quiz .`
+3. `docker run --rm -it unfold_typeahead_quiz:latest /bin/bash`
+4. `python main.py < input_1.txt > test_output_1.txt`
+5. `diff output_1.txt test_output_1.txt`
 
-This is a common corporate interview quiz, which likely originated circa 2004/2005 when Google debuted the typeahead feature of their search homepage we all know and love. It appears that the input file format is designed to prevent drop-in library usage and also to define predictable results.
+## Results
 
-There are many examples of solutions found online through StackOverflow, [corporate blogs](https://medium.com/double-pointer/system-design-interview-autocomplete-type-ahead-system-for-a-search-box-1ac968f9f121) and [for-profit educational websites](https://www.educative.io/courses/grokking-the-system-design-interview/mE2XkgGRnmp#1.-What-is-Typeahead-Suggestion?). There are some attempts at providing this functionality in language-specific libraries. [Zepworks, for example](https://pypi.org/project/fast-autocomplete/) includes sorting order through a count context. That might be fun to start with.
+My results are not perfect. This is caused by the library I integrated to do the matching/searching algorithms.
 
-This exercise specifically requests I/O to be done with stdin and stdout, so we're not concerned with a GUI text box or a web app backing service. I suspect most implementations for web frond ends will be exclusively JavaScript.
+The first simulated input has these differences
 
-It seems that the input file format is a portion of the challenge as it requires reading, splitting lines, splitting strings, counting from an offset based on a parameter from the list and interpreting special input characters.
+```
+# python main.py < input_1.txt > test_output_1.txt
+# diff output_1.txt test_output_1.txt
+8c8
+< vertical_farm, vertical_farming, vertical
+---
+> vertical, vertical_farm, vertical_farming
+26c26
+< vertical_farming, vertical_farm, vapor_deficit, vertical
+---
+> vertical_farm, vertical_farming, vapor_deficit, vertical
+```
+
+This is a result of a convention the author used for sorting exact matches, [reported upstream](https://github.com/seperman/fast-autocomplete/issues/28).
+
+The second simulated input has these differences
+
+```
+# python main.py < input_2.txt > test_output_2.txt
+# diff output_2.txt test_output_2.txt
+1c1,3
+< i_love_code, i_love_machine_learning, i_love_coding, ironman, island
+---
+> i_love_code, i_love_machine_learning, island, ironman, i_love_coding
+> ironman
+> ironman
+11,13c13
+< 
+< 
+< i_love_code, i_love_machine_learning, i_love_coding, ironman, island, iron_maiden
+---
+> i_love_code, i_love_machine_learning, island, ironman, i_love_coding, iron_maiden
+```
+
+The first and last differences are the result of the library author sorting alphabetically in decending order. I chose not to modify the library though I agree this is a bit counter-intuitive. Probably worth my time to submit a PR.
+
+The middle difference kind of looks like a bug, which I have [reported upstream](https://github.com/seperman/fast-autocomplete/issues/37) though the lib also uses a [library](https://github.com/ztane/python-Levenshtein) with a string similarity algorithm, which I don't fully understand. That might also influence the extra two matches after the underscore input character.
+
+## Feedback
+
+I'll discuss more in person but worth noting here, my skills do not lie in writing code all day, which you can probably see from my results. I'm aware of OOP in Python though it's not a methodology I intuitively use from memory. I could very likely get these same results by refactoring this to be OO, as indicated in the comments.
+
+I included a git commit history and some time tracking through a little pomodoro script I like. You can see I spent more time then the suggested 60 to 90 minutes to arrive at these results.
+
+I believe this is a good demonstration of how I approch real-world computer programming problems. I have also formatted the file using the defaults from the `black` python code formatter and vim plugins for python.
