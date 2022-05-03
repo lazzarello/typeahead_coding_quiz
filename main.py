@@ -124,7 +124,8 @@ def output(i):
                 autocomplete.search(word=search_string, max_cost=1, size=_num_results)
             )
             # join the list in each line to match our example output
-            output_string += f"Search Input '{search_string}' : {join_list_of_strings(list_output)}\n"
+            # output_string += f"Search Input '{search_string}' : {join_list_of_strings(list_output)}\n"
+            output_string += f"{join_list_of_strings(list_output)}\n"
     return output_string
 
 
