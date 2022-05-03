@@ -5,7 +5,6 @@ from collections import defaultdict
 # https://pypi.org/project/fast-autocomplete/
 from fast_autocomplete import AutoComplete, autocomplete_factory
 
-# TODO run black on this and reformat
 
 # globals,
 # could be instance/class variables but my intuition is not OOP, so I started like this
