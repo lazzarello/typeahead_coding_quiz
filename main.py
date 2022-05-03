@@ -1,35 +1,36 @@
 import sys
 
-# Lean on a fancy lib for search algorithm
+# Lean on a fancy lib for search algorithm,
+# which is TOO FANCY to output the exact results in the examples
 # https://pypi.org/project/fast-autocomplete/
 from fast_autocomplete import AutoComplete, autocomplete_factory
 
 
 # globals,
 # could be instance/class variables but my intuition is not OOP, so I started like this
-i_terminator = "#"
-i_file_contents = ""
-phrase_freq = {}
-space_replacement = "_"
-split_character = ","
 dict_offset = 0
 input_offset = 0
 words = {}
-# Use protected conventions
+# Use private convention even though we're not OO right now.
+_split_character = ","
+_i_file_contents = ""
+_i_terminator = "#"
 _num_results = 10
+# prolly don't need these ever
+phrase_freq = {}
+space_replacement = "_"
 
 # get standard input. ez pz.
 for line in sys.stdin:
-    i_file_contents += line
+    _i_file_contents += line
 
 # splitlines into a list, but this can totally be done up there ^^
-i_splitlines = i_file_contents.splitlines()
+i_splitlines = _i_file_contents.splitlines()
 
 
 def get_words(i):
-    # lulz, scope. check commit history for me being dumb.
     global dict_offset
-    # convention in the rules says the first line is a data offset this lines + 1 long
+    # convention in the rules says the first line is a data offset this num lines + 1 long
     dict_offset = int(i[0]) + 1
     return i[1:dict_offset]
 
@@ -46,13 +47,13 @@ def format_words(i):
     global words
     i_w = get_words(i)
     for i in i_w:
-        # split into [phrase, count] then format words dict for our DWG library
-        w = i.split(split_character)
+        # split into [phrase, count] then format words dict for our autocomplete lib
+        w = i.split(_split_character)
         # TODO The fast-autocomplete lib picks alphabetical order ascending as tie-breaker.
         # The convention in the instructions is decending order.
         # Q: why is the 8th result always sorted backwards using example input 1?
         # A: fast-autocomplete lib prefers an exact match for sorting above frequency,
-        #    so 'vertical' will always sort 'vertical' first regardless of i_terminator.
+        #    so 'vertical' will always sort 'vertical' first regardless of count.
         # Q: why is the result in example output 2 just like, wrong?
         # A: fast-autocomplete lib is matching 'iron_' to ironman, and a few others.
         #    This could be due to the mis-spelling feature.
@@ -92,15 +93,15 @@ def output(i):
     output_string = ""
     # fill up the dict of previously input words
     words = format_words(i)
-    # load up autocomplete with the dict
+    # load up autocomplete with the historical dict
     autocomplete = load_autocomplete(words)
     # get a list of our simulated user input
     search_input = get_inputs(i)
     # print(f'Previous Words and Frequency: {words}')
     # print(f'Search inputs" {search_input}')
-    # loop through simulated user input as if typing characters, reset on i_terminator character
+    # loop through simulated user input as if typing characters, reset on _i_terminator character
     for c in search_input:
-        if c == i_terminator:
+        if c == _i_terminator:
             # Effective Python page 68 "Prefer get Over in..."
             if words.get(search_string) is None:
                 words[search_string] = {"count": 1}
@@ -135,7 +136,9 @@ def main():
     # write_file_from_string('test_output_1.txt', o)
 
 
-# push the old stuff into a class so I can read this file better
+# push the old stuff into a class so I can read this file better.
+# I started this way and quickly leaned on a library after looking for
+# some prior art. Check fast-autocomplete branch history.
 class NoLibraryVersion:
     def __init__(self):
         self.foo = 0
@@ -156,8 +159,8 @@ class NoLibraryVersion:
         # count i_num_phrases + 1 offset from input
         # i_num_characers is the next line
         # read i_num_characters into a string
-        # split the string on i_terminator character
-        inputs = i.split(i_terminator)
+        # split the string on _i_terminator character
+        inputs = i.split(_i_terminator)
 
     # not really necessary but nice
     def replace_underscore_to_space(self, phrase):
