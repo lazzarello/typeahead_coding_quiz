@@ -1,4 +1,7 @@
 import sys
+from collections import defaultdict
+# Lean on a fancy lib for search algorithm
+# https://pypi.org/project/fast-autocomplete/
 from fast_autocomplete import AutoComplete,autocomplete_factory
 # TODO run black on this and reformat
 
@@ -42,22 +45,23 @@ def format_words(i):
     for i in i_w:
         # split into [phrase, count] then format words dict for our DWG library
         w = i.split(split_character)
-        # The fast-autocomplete lib picks alphabetical order ascending as tie-breaker.
+        # TODO The fast-autocomplete lib picks alphabetical order ascending as tie-breaker.
+        # The convention in the instructions is decending order.
         # Q: why is the 8th result always sorted backwards using example input 1?
-        # A: fast-autocomplete lib prefers an exact match for sorting over frequency
-        #    so 'vertical' will always sort 'vertical' first.
+        # A: fast-autocomplete lib prefers an exact match for sorting above frequency,
+        #    so 'vertical' will always sort 'vertical' first regardless of i_terminator.
         # Q: why is the result in example output 2 just like, wrong? 
-        # A: fast-autocomplete lib treats '_' as some type of special search character
-        #    which might be due to some fancy DAG thing I don't understand.
-        #    this seems to be a result of the max_cost param to the autocomplete.search function
-        #    this seems to be a result of the max_cost param to the autocomplete.search function
+        # A: fast-autocomplete lib is matching 'iron_' to ironman, and a few others.
+        #    This could be due to the mis-spelling feature.
         
         # pass in count to word dict for autocomplete lib to use for sorting later
-        words[w[0]] = {'count': w[1]}
+        words[w[0]] = {'count': int(w[1])}
     return words
 
 def load_autocomplete(words):
     # pass previously input words dict into autocomplete lib
+    # oh my, this library is complicated.
+    # https://zepworks.com/posts/you-autocomplete-me/
     return AutoComplete(words=words)
 
 def flatten_list(i):
@@ -84,15 +88,19 @@ def output(i):
     autocomplete = load_autocomplete(words)
     # get a list of our simulated user input
     search_input = get_inputs(i)
-    print(f'Previous Words and Frequency: {words}')
-    print(f'Search inputs" {search_input}')
+    # print(f'Previous Words and Frequency: {words}')
+    # print(f'Search inputs" {search_input}')
     # loop through simulated user input as if typing characters, reset on i_terminator character
     for c in search_input:
         if(c == i_terminator):
-            # TODO let's like, add 1 to the count, please?
-            words[search_string] = { 'count': '1' }
-            print(f'Previous Words and Frequency: {words}')
-            autocomplete = load_autocomplete(words)
+            # Effective Python page 68 "Prefer get Over in..."
+            if words.get(search_string) is None:
+                words[search_string] = { 'count' : 1 }
+                autocomplete = load_autocomplete(words)
+            else:
+                words[search_string]['count'] += 1 
+                autocomplete.update_count_of_word(word=search_string, count=words[search_string]['count'])
+            # print(f'Previous Words and Frequency: {words}')
             # reset search input
             search_string = ''
             output_string += '\n'
@@ -101,7 +109,7 @@ def output(i):
             search_string += c
             # call autocomplete lib search,
             # autocomplete lib returns a list of lists of characters, flatten into a single list,
-            list_output = flatten_list(autocomplete.search(word=search_string, size=_num_results))
+            list_output = flatten_list(autocomplete.search(word=search_string, max_cost=1, size=_num_results))
             # join the list in each line to match our example output
             output_string += f'Search Input \'{search_string}\' : {join_list_of_strings(list_output)}\n'
     return output_string
