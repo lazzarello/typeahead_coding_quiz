@@ -1,4 +1,4 @@
-# Unfold coding quiz
+# Typeahead coding quiz
 
 ## Running
 
@@ -12,8 +12,8 @@
 Dependencies not installing or not interested in upgrading python version? Run it interactively inside a container.
 
 1. Install docker
-2. `docker build -t unfold_typeahead_quiz .`
-3. `docker run --rm -it unfold_typeahead_quiz:latest /bin/bash`
+2. `docker build -t typeahead_quiz .`
+3. `docker run --rm -it typeahead_quiz:latest /bin/bash`
 4. `python main.py < input_1.txt > test_output_1.txt`
 5. `diff output_1.txt test_output_1.txt`
 
